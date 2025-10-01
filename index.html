@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Rancangan Web Kelompok 1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /*
+        ==================================================
+        GLOBAL STYLES & VARIABLES
+        ==================================================
+        */
+
+        :root {
+            --primary-color: #5ba7cb; /* Baby Blue */
+            --secondary-color: #34495E; /* Dark Blue/Gray for contrast (Text/Footer) */
+            --accent-color: #F7C873; /* Soft Gold/Cream Accent for buttons (Upload/Success) */
+            --light-bg-color: #FAF9F6; /* Creamy White (Background utama) */
+            --dark-bg-color: #34495E; /* Use secondary for dark sections like footer/contact */
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        /* ANONYMOUS MESSAGE SPECIFIC STYLES FOR SOFT BLUE */
+        .anonymous-message .section-title h2::after,
+        .message-container h3,
+        .privacy-notice i,
+        .privacy-notice strong,
+        .upload-area:hover {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        
+        .anonymous-message .section-title h2::after {
+            background-color: var(--primary-color) !important;
+        }
+
+        .privacy-notice {
+            background-color: rgba(137, 207, 240, 0.1) !important; /* Baby Blue with transparency */
+            color: var(--secondary-color) !important; /* Darker text for readability */
+        }
+        
+        .message-form input:focus,
+        .message-form textarea:focus,
+        .message-form select:focus {
+            outline: none;
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(137, 207, 240, 0.35) !important;
+        }
+
+        /* FITUR PESAN ANONIM: Membuat teks tidak terlihat saat mengetik */
+        .message-form textarea#anonymous-message {
+            color: var(--text-color); /* Diubah kembali ke normal */
+            text-shadow: none;
+        }
+        
+        .message-form textarea#anonymous-message:focus {
+            caret-color: var(--text-color); 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--light-bg-color); /* Creamy White */
+            padding-top: 70px; 
+            overflow-x: hidden; 
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        section {
+            padding: 80px 0; 
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px; 
+        }
+
+        .section-title h2 {
+            font-size: 2.8rem; 
+            color: var(--secondary-color);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px; 
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px; 
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /*
+        ==================================================
+        HEADER & NAVIGATION
+        ==================================================
+        */
+
+        header {
+            background-color: var(--white-color);
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            text-decoration: none; 
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.6rem; 
+            color: var(--secondary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .hamburger.active {
+            transform: rotate(90deg); 
+        }
+
+        /*
+        ==================================================
+        HERO SECTION
+        ==================================================
+        */
+
+        .hero {
+            background: linear-gradient(rgba(137, 207, 240, 0.8), rgba(137, 207, 240, 0.8)), url('https://source.unsplash.com/random/1600x900/?computer-lab,network-server,student-group') no-repeat center center/cover;
+            height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--white-color);
+        }
+
+        .hero-content {
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInHero 1s ease-out forwards 0.5s;
+        }
+        @keyframes fadeInHero {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content h1 {
+            font-size: 4.2rem; 
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+            animation: scaleIn 0.8s ease-out forwards 1s;
+            transform: scale(0.9);
+            opacity: 0;
+        }
+        @keyframes scaleIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .hero-content p {
+            font-size: 1.4rem; 
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+            animation: fadeIn 1s ease-out forwards 1.2s; 
+            opacity: 0;
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-image.animate-on-scroll {
+            transform: translateX(50px);
+        }
+        .about-image.animate-on-scroll.is-visible {
+            transform: translateX(0);
+        }
+
+        .about-text.animate-on-scroll {
+            transform: translateX(-50px);
+        }
+        .about-text.animate-on-scroll.is-visible {
+            transform: translateX(0);
+        }
+
+        /*
+        ==================================================
+        ABOUT SECTION
+        ==================================================
+        */
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .about-text ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 25px;
+        }
+
+        .about-text ul li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+        }
+        .about-text ul li i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transform: rotate(-2deg);
+            transition: transform 0.5s ease, box-shadow 0.3s ease;
+        }
+        
+        .about-image:hover {
+            transform: rotate(0deg) scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+        }
+        .about-image:hover img {
+            transform: scale(1.1);
+        }
+
+        /*
+        ==================================================
+        STUDENTS SECTION - SLIDER
+        ==================================================
+        */
+
+        .students {
+            background-color: var(--light-bg-color);
+        }
+
+        .students-slider-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .students-slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .student-card {
+            min-width: 100%;
+            background-color: var(--white-color);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .student-img {
+            height: 350px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .student-img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .student-card:hover .student-img::after {
+            opacity: 1;
+        }
+
+        .student-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .student-card:hover .student-img img {
+            transform: scale(1.1);
+        }
+
+        .student-info {
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .student-info h3 {
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .student-info p {
+            color: #6c757d;
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev-btn {
+            left: 15px;
+        }
+
+        .next-btn {
+            right: 15px;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        /*
+        ==================================================
+        GALLERY SECTION WITH UPLOAD
+        ==================================================
+        */
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+            height: 280px; 
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+            transform: translateY(-8px) scale(1.01);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Updated overlay gradient */
+            background: linear-gradient(to top, rgba(137, 207, 240, 0.9) 0%, rgba(137, 207, 240, 0.5) 70%, transparent 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            text-align: center;
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-overlay h3 {
+            color: var(--white-color);
+            font-size: 1.5rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.5s ease 0.1s, opacity 0.5s ease 0.1s;
+        }
+        
+        .gallery-item:hover .gallery-overlay h3 {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Upload Section - Dibuat Lebih Kecil */
+        .upload-section {
+            background-color: var(--white-color);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin: 40px auto 0 auto; /* Center it */
+            max-width: 500px; /* Limit max width */
+            text-align: center;
+        }
+
+        .upload-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 20px; /* Reduced padding */
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(137, 207, 240, 0.05);
+        }
+
+        .upload-area:hover {
+            background-color: rgba(137, 207, 240, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .upload-area i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .upload-area span {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: var(--accent-color); /* Soft Gold/Cream */
+            border-color: var(--accent-color);
+            color: var(--secondary-color);
+        }
+
+        .upload-btn:hover {
+            background-color: #E6B65D; 
+            border-color: #E6B65D;
+            color: var(--white-color);
+        }
+
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .preview-item {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #dc3545;
+        }
+
+        /* Deskripsi Foto */
+        .description-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .description-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(137, 207, 240, 0.25);
+        }
+
+        /*
+        ==================================================
+        ANONYMOUS MESSAGE SECTION
+        ==================================================
+        */
+
+        .anonymous-message {
+            background-color: var(--light-bg-color);
+        }
+
+        .message-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--white-color);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .message-container h3 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .message-form .form-group {
+            margin-bottom: 25px;
+        }
+
+        .message-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--secondary-color);
+        }
+
+        .message-form input,
+        .message-form textarea,
+        .message-form select { /* Tambahkan select di sini */
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: var(--white-color);
+            color: var(--text-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        /* Styling khusus untuk dropdown select */
+        .message-form select {
+            appearance: none; 
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="%23212529"><polygon points="0,0 10,0 5,10"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 8px;
+            cursor: pointer;
+        }
+
+        .message-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .message-form .btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+
+        .privacy-notice {
+            background-color: rgba(137, 207, 240, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .privacy-notice i {
+            margin-right: 8px;
+        }
+
+        /* Message Display Section */
+        .messages-display {
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .messages-display h3 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .message-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .message-item {
+            background-color: var(--white-color);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .message-type {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .message-time {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+
+        .message-content {
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .no-messages {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /*
+        ==================================================
+        CONTACT SECTION
+        ==================================================
+        */
+
+        .contact {
+            background-color: var(--dark-bg-color);
+            color: var(--white-color);
+        }
+
+        .contact .section-title h2 {
+            color: var(--white-color);
+        }
+
+        .contact .section-title h2::after {
+            background-color: var(--primary-color);
+        }
+
+        .contact-content {
+            display: flex;
+            gap: 40px;
+        }
+
+        .contact-info {
+            flex: 1;
+            padding: 30px; 
+            background-color: rgba(255, 255, 255, 0.08); 
+            border-radius: 15px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-info h3 {
+            margin-bottom: 25px;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .contact-info p {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 1.1rem;
+        }
+
+        .contact-info i {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            width: 28px;
+            text-align: center;
+            flex-shrink: 0; 
+        }
+
+        .contact-form {
+            flex: 1;
+            padding: 30px 0; 
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px; 
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white-color);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-color); 
+            background-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 8px rgba(247, 200, 115, 0.5); /* Shadow fokus dengan warna accent */
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .contact-form .btn {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--secondary-color);
+            width: 100%;
+            padding: 15px;
+        }
+
+        .contact-form .btn:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        /*
+        ==================================================
+        FOOTER
+        ==================================================
+        */
+
+        footer {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            padding: 30px 0; 
+            text-align: center;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-content p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px; 
+        }
+
+        .social-links a {
+            color: var(--white-color);
+            font-size: 1.6rem; 
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+            transform: scale(1.3) rotate(5deg);
+        }
+
+
+        /*
+        ==================================================
+        RESPONSIVE DESIGN
+        ==================================================
+        */
+
+        @media (max-width: 992px) {
+            .about-content, .contact-content {
+                flex-direction: column;
+            }
+            
+            .about-image {
+                margin-top: 40px;
+                max-width: 90%;
+            }
+
+            .contact-info {
+                order: 2;
+                margin-top: 40px;
+            }
+            .contact-form {
+                padding: 0;
+            }
+
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+            .hero-content h1 {
+                font-size: 3.5rem;
+            }
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .navbar {
+                padding: 10px 0;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 60px; 
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 60px);
+                background-color: var(--white-color);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 40px;
+                transition: left 0.4s ease;
+                z-index: 999;
+                box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 15px 0;
+                opacity: 0;
+                transition: opacity 0.5s ease 0.2s;
+            }
+            
+            .nav-links.active li {
+                opacity: 1;
+            }
+
+            .nav-links a {
+                font-size: 1.3rem;
+            }
+
+            .hamburger {
+                display: block;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .about-image.animate-on-scroll,
+            .about-text.animate-on-scroll {
+                transform: translateY(30px);
+            }
+            
+            .student-img {
+                height: 300px;
+            }
+            
+            .slider-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .upload-section, .message-container {
+                padding: 20px;
+            }
+
+            .preview-item {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 576px) {
+             .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            .hero-content .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .students-grid, .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-image {
+                max-width: 100%;
+            }
+            
+            .gallery-item {
+                height: 250px;
+            }
+
+            .contact-info h3 {
+                font-size: 1.8rem;
+            }
+            .contact-info p {
+                font-size: 1rem;
+            }
+            
+            .student-img {
+                height: 250px;
+            }
+            
+            .student-info {
+                padding: 15px;
+            }
+            
+            .student-info h3 {
+                font-size: 1.3rem;
+            }
+            
+            .student-info p {
+                font-size: 0.95rem;
+            }
+
+            .upload-section, .message-container {
+                padding: 15px;
+            }
+
+            .preview-item {
+                width: 80px;
+                height: 80px;
+            }
+
+            .upload-area {
+                padding: 30px 15px;
+            }
+
+            .upload-area i {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#home" class="logo">Ecostic<span>04</span></a>
+                <ul class="nav-links">
+                    <li><a href="#home" class="nav-link active">Beranda</a></li>
+                    <li><a href="#about" class="nav-link">Tentang</a></li>
+                    <li><a href="#students" class="nav-link">Ecostic Member</a></li>
+                    <li><a href="#gallery" class="nav-link">Galeri</a></li>
+                    <li><a href="#anonymous" class="nav-link">Pesan Anonim</a></li>
+                    <li><a href="#contact" class="nav-link">Kontak</a></li>
+                </ul>
+                <div class="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Selamat Datang di Jurusan Statistika Kelas 04 Angkatan 2023</h1>
+                <p>
+                    Mencetak talenta digital unggul yang menguasai **Teknik Komputer dan Jaringan**, 
+                    siap menghadapi tantangan industri 4.0.
+                </p>
+                <a href="#about" class="btn">Kenali Kami Lebih Jauh <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+    
+    <div style="height: 10px; background-color: var(--primary-color);"></div>
+
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-title animate-on-scroll">
+                <h2>Tentang Jurusan Statistika</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text animate-on-scroll">
+                    <h3>Fokus Kami: Analisis Data</h3>
+                    <p>
+                        Jurusan Statistika di FMIPA UNM angkatan 2023 terdiri dari 4 kelas, dan kami adalah kelas 04 dengan nama 
+                        ECOSTIC. Jurusan Statistika menawarkan beberapa konsentrasi, di antaranya:
+                    </p>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Konsentrasi Teori: Memfokuskan pada pemahaman mendalam tentang konsep dasar statistika. Mahasiswa akan belajar untuk menganalisis data secara teoritis.</li>
+                        <li><i class="fas fa-check-circle"></i> Kesehatan Lingkungan: Memfokuskan pada analisis data terkait kesehatan masyarakat dan lingkungan. Mahasiswa belajar mengidentifikasi, menganalisis, dan memecahkan masalah kesehatan dengan menggunakan metode statistik.</li>
+                        <li><i class="fas fa-check-circle"></i> Ilmu Pendidikan dan Pemerintahan: Mengaplikasikan teknik statistik untuk penelitian di bidang pendidikan dan kebijakan publik. Mahasiswa akan belajar menganalisis data pendidikan dan evaluasi program untuk meningkatkan kualitas pengambilan keputusan.</li>
+                        <li><i class="fas fa-check-circle"></i> Komputasi: Menyediakan keterampilan dalam penggunaan perangkat lunak statistik dan pemrograman untuk analisis data. Mahasiswa akan belajar teknik pemodelan dan analisis data besar, serta penerapan algoritma statistik dalam konteks komputasi.</li>
+                    </ul>
+                    <a href="#contact" class="btn" style="margin-top: 20px;">Bergabunglah dengan Kami</a>
+                </div>
+                <div class="about-image animate-on-scroll">
+                    <img src="https://source.unsplash.com/random/600x400/?computer-network,server-room" alt="Kelas 04 ECOSTIC">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="students" class="students">
+        <div class="container">
+            <div class="section-title animate-on-scroll">
+                <h2>Bintang Kelas Kami</h2>
+            </div>
+            <div class="students-slider-container animate-on-scroll">
+                <div class="students-slider">
+                    <div class="student-card">
+                        <div class="student-img">
+                            <img src="coba.jpg" alt="Ahmad Rizki">
+                        </div>
+                        <div class="student-info">
+                            <h3>Ahmad Rizki</h3>
+                            <p>Ketua Kelas | Ahli Jaringan</p>
+                        </div>
+                    </div>
+                    <div class="student-card">
+                        <div class="student-img">
+                            <img src="coba.jpg" alt="Siti Nurhaliza">
+                        </div>
+                        <div class="student-info">
+                            <h3>Siti Nurhaliza</h3>
+                            <p>Wakil Ketua | Master Hardware</p>
+                        </div>
+                    </div>
+                    <div class="student-card">
+                        <div class="student-img">
+                            <img src="https://source.unsplash.com/random/600x600/?male-student,asian" alt="Budi Santoso">
+                        </div>
+                        <div class="student-info">
+                            <h3>Budi Santoso</h3>
+                            <p>Sekretaris | Programmer Muda</p>
+                        </div>
+                    </div>
+                    <div class="student-card">
+                        <div class="student-img">
+                            <img src="https://source.unsplash.com/random/600x600/?female-student,indonesian" alt="Dewi Lestari">
+                        </div>
+                        <div class="student-info">
+                            <h3>Dewi Lestari</h3>
+                            <p>Bendahara | Desainer UI/UX</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="slider-btn prev-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="slider-btn next-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="slider-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                    <span class="dot" data-slide="3"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <div class="section-title animate-on-scroll">
+                <h2>Momen Keseruan Ecostic</h2>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item animate-on-scroll">
+                    <img src="https://source.unsplash.com/random/600x400/?coding-session,students" alt="Praktikum Pemrograman">
+                    <div class="gallery-overlay">
+                        <h3>Praktikum Pemrograman Web</h3>
+                    </div>
+                </div>
+                <div class="gallery-item animate-on-scroll" style="transition-delay: 0.1s;">
+                    <img src="https://source.unsplash.com/random/600x400/?server-rack,networking-cable,it-room" alt="Praktikum Jaringan">
+                    <div class="gallery-overlay">
+                        <h3>Konfigurasi Jaringan Lanjut</h3>
+                    </div>
+                </div>
+                <div class="gallery-item animate-on-scroll" style="transition-delay: 0.2s;">
+                    <img src="https://source.unsplash.com/random/600x400/?pc-assembly,electronics,workshop" alt="Workshop IT">
+                    <div class="gallery-overlay">
+                        <h3>Workshop Perakitan Komputer</h3>
+                    </div>
+                </div>
+                <div class="gallery-item animate-on-scroll" style="transition-delay: 0.3s;">
+                    <img src="https://source.unsplash.com/random/600x400/?group-study,laptop,teamwork" alt="Kerja Kelompok">
+                    <div class="gallery-overlay">
+                        <h3>Diskusi Kelompok & Project</h3>
+                    </div>
+                </div>
+                <div class="gallery-item animate-on-scroll" style="transition-delay: 0.4s;">
+                    <img src="https://source.unsplash.com/random/600x400/?presentation,project-display,teacher" alt="Presentasi Projek">
+                    <div class="gallery-overlay">
+                        <h3>Presentasi Project Akhir</h3>
+                    </div>
+                </div>
+                <div class="gallery-item animate-on-scroll" style="transition-delay: 0.5s;">
+                    <img src="https://source.unsplash.com/random/600x400/?cybersecurity,data-analysis,student-focus" alt="Lab Komputer">
+                    <div class="gallery-overlay">
+                        <h3>Sesi Keamanan Jaringan</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="upload-section animate-on-scroll">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Bagikan Momen Keseruan Anda</h3>
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-images"></i>
+                    <p>Klik atau seret foto ke sini untuk mengupload</p>
+                    <span>Format yang didukung: JPG, PNG, GIF (Maks. 5MB)</span>
+                    <input type="file" id="file-input" accept="image/*" multiple>
+                </div>
+                <button class="btn upload-btn" id="upload-btn" disabled>
+                    <i class="fas fa-upload"></i> Konfirmasi Upload
+                </button>
+                <div class="preview-container" id="preview-container"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="anonymous" class="anonymous-message">
+        <div class="container">
+            <div class="section-title animate-on-scroll">
+                <h2>Kirim Pesan Anonim</h2>
+                <p style="max-width: 600px; margin: 0 auto; font-size: 1.1rem;">
+                    Sampaikan pendapat, saran, atau kritik Anda secara anonim. Identitas Anda akan dirahasiakan.
+                </p>
+            </div>
+            <div class="message-container animate-on-scroll">
+                <h3><i class="fas fa-user-secret"></i> Kotak Pesan Rahasia</h3>
+                <form class="message-form" id="anonymous-form">
+                    <div class="form-group">
+                        <label for="message-type">Jenis Pesan:</label>
+                        <select id="message-type" required>
+                            <option value="">-- Pilih Jenis Pesan --</option>
+                            <option value="Saran">Saran</option>
+                            <option value="Kritik">Kritik</option>
+                            <option value="Apresiasi">Apresiasi</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="anonymous-message">Pesan Anda:</label>
+                        <textarea id="anonymous-message" placeholder="Tulis pesan Anda di sini..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-paper-plane"></i> Kirim Pesan Anonim
+                    </button>
+                </form>
+                <div class="privacy-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <strong>Privasi Terjamin:</strong> Pesan Anda akan dikirim secara anonim dan tidak akan melacak identitas Anda.
+                </div>
+            </div>
+
+            <!-- Display Messages Section -->
+            <div class="messages-display animate-on-scroll">
+                <h3><i class="fas fa-comments"></i> Pesan yang Telah Dikirim</h3>
+                <div class="message-list" id="message-list">
+                    <div class="no-messages" id="no-messages">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; color: #6c757d;"></i>
+                        <p>Belum ada pesan yang dikirim. Jadilah yang pertama!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-title animate-on-scroll">
+                <h2>Hubungi Kami</h2>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info animate-on-scroll">
+                    <h3>Informasi Kontak 📞</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Jl. Pendidikan IT No. 123, Jakarta</p>
+                    <p><i class="fas fa-phone"></i> (021) 1234-5678 (Sekretariat Sekolah)</p>
+                    <p><i class="fas fa-envelope"></i> xitkj3@sekolah.sch.id</p>
+                    <p><i class="fas fa-clock"></i> Jam Pelajaran: Senin - Jumat (07.00 - 16.00)</p>
+                    <div class="social-links" style="margin-top: 30px;">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p> ECOSTIC - Jurusan Statistika FMIPA UNM</p>
+                <div class="social-links">
+                    </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const navItems = document.querySelectorAll('.nav-link');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            const icon = hamburger.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times'); 
+        });
+
+        // Close mobile menu and set active link when clicking on a link
+        navItems.forEach(link => {
+            link.addEventListener('click', function() {
+                navItems.forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    const icon = hamburger.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 60, 
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Active link highlighting on scroll
+        const sections = document.querySelectorAll("section");
+
+        window.addEventListener("scroll", () => {
+            let current = "";
+
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) { 
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navItems.forEach((li) => {
+                li.classList.remove("active");
+                if (li.getAttribute("href").includes(current)) {
+                    li.classList.add("active");
+                }
+            });
+        });
+
+        // ANIMATION ON SCROLL (Intersection Observer)
+        const animateElements = document.querySelectorAll('.animate-on-scroll');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                } else {
+                    // entry.target.classList.remove('is-visible'); 
+                }
+            });
+        }, {
+            root: null, 
+            rootMargin: '0px',
+            threshold: 0.2 
+        });
+
+        animateElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // STUDENT SLIDER FUNCTIONALITY
+        const slider = document.querySelector('.students-slider');
+        const slides = document.querySelectorAll('.student-card');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const dots = document.querySelectorAll('.dot');
+        
+        let currentSlide = 0;
+        const slideCount = slides.length;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slideCount;
+            updateSlider();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + slideCount) % slideCount;
+            updateSlider();
+        });
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                currentSlide = parseInt(dot.getAttribute('data-slide'));
+                updateSlider();
+            });
+        });
+
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slideCount;
+            updateSlider();
+        }, 5000);
+
+        // PHOTO UPLOAD FUNCTIONALITY - UPDATED WITH DESCRIPTION
+        const galleryGrid = document.querySelector('.gallery-grid');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const previewContainer = document.getElementById('preview-container');
+        
+        let selectedFiles = [];
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'rgba(137, 207, 240, 0.15)'; 
+            uploadArea.style.borderColor = 'var(--accent-color)';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = 'rgba(137, 207, 240, 0.05)';
+            uploadArea.style.borderColor = 'var(--primary-color)';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'rgba(137, 207, 240, 0.05)';
+            uploadArea.style.borderColor = 'var(--primary-color)';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+        });
+
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                const isDuplicate = selectedFiles.some(
+                    f => f.name === file.name && f.size === file.size
+                );
+                
+                if (isDuplicate) {
+                    alert(`File "${file.name}" sudah ditambahkan.`);
+                    continue;
+                }
+                
+                if (!file.type.match('image.*')) {
+                    alert('Hanya file gambar yang diizinkan!');
+                    continue;
+                }
+                
+                if (file.size > MAX_FILE_SIZE) {
+                    alert('Ukuran file terlalu besar! Maksimal 5MB.');
+                    continue;
+                }
+                
+                selectedFiles.push(file);
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = 'Preview';
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    
+                    // Add description input
+                    const descriptionContainer = document.createElement('div');
+                    descriptionContainer.style.width = '100%';
+                    descriptionContainer.style.marginTop = '10px';
+                    
+                    const descriptionInput = document.createElement('textarea');
+                    descriptionInput.className = 'description-input';
+                    descriptionInput.placeholder = 'Tambahkan deskripsi foto...';
+                    descriptionInput.dataset.fileName = file.name;
+                    
+                    descriptionContainer.appendChild(descriptionInput);
+                    
+                    removeBtn.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        const index = selectedFiles.indexOf(file);
+                        if (index > -1) {
+                            selectedFiles.splice(index, 1);
+                        }
+                        previewItem.remove();
+                        descriptionContainer.remove();
+                        updateUploadButton();
+                    });
+                    
+                    previewItem.appendChild(img);
+                    previewItem.appendChild(removeBtn);
+                    previewContainer.appendChild(previewItem);
+                    previewContainer.appendChild(descriptionContainer);
+                    
+                    updateUploadButton();
+                };
+                reader.readAsDataURL(file);
+            }
+            fileInput.value = ''; 
+        }
+
+        function updateUploadButton() {
+            uploadBtn.disabled = selectedFiles.length === 0;
+            if (selectedFiles.length > 0) {
+                 uploadBtn.innerHTML = `<i class="fas fa-upload"></i> Konfirmasi Upload (${selectedFiles.length} Foto)`;
+            } else {
+                 uploadBtn.innerHTML = `<i class="fas fa-upload"></i> Konfirmasi Upload`;
+            }
+        }
+
+        uploadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (selectedFiles.length === 0) {
+                alert('Pilih foto terlebih dahulu!');
+                return;
+            }
+            
+            const totalUploaded = selectedFiles.length;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            uploadBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Transfer selected files ke gallery grid dengan deskripsi
+                selectedFiles.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const descriptionInput = document.querySelector(`.description-input[data-file-name="${file.name}"]`);
+                        const description = descriptionInput ? descriptionInput.value.trim() : '';
+                        
+                        const newItem = document.createElement('div');
+                        newItem.className = 'gallery-item animate-on-scroll is-visible';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        
+                        const overlay = document.createElement('div');
+                        overlay.className = 'gallery-overlay';
+                        
+                        let displayText = description || 'Foto Baru';
+                        if (displayText.length > 30) {
+                            displayText = displayText.substring(0, 27) + '...';
+                        }
+                        
+                        overlay.innerHTML = `<h3>${displayText}</h3>`;
+                        
+                        newItem.appendChild(img);
+                        newItem.appendChild(overlay);
+                        
+                        galleryGrid.prepend(newItem); 
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                alert(`Berhasil mengupload dan menampilkan ${totalUploaded} foto ke Galeri!`);
+                
+                // Reset upload section
+                selectedFiles = [];
+                previewContainer.innerHTML = '';
+                fileInput.value = '';
+                updateUploadButton(); 
+            }, 2000);
+        });
+
+        // ANONYMOUS MESSAGE FUNCTIONALITY WITH DISPLAY
+        const anonymousForm = document.getElementById('anonymous-form');
+        const messageList = document.getElementById('message-list');
+        const noMessages = document.getElementById('no-messages');
+        
+        // Array untuk menyimpan pesan
+        let anonymousMessages = [];
+        
+        // Fungsi untuk menampilkan pesan
+        function displayMessages() {
+            messageList.innerHTML = '';
+            
+            if (anonymousMessages.length === 0) {
+                noMessages.style.display = 'block';
+                messageList.appendChild(noMessages);
+                return;
+            }
+            
+            noMessages.style.display = 'none';
+            
+            // Tampilkan pesan terbaru di atas
+            anonymousMessages.slice().reverse().forEach((message, index) => {
+                const messageItem = document.createElement('div');
+                messageItem.className = 'message-item';
+                
+                const messageHeader = document.createElement('div');
+                messageHeader.className = 'message-header';
+                
+                const messageType = document.createElement('span');
+                messageType.className = 'message-type';
+                messageType.textContent = message.type;
+                
+                const messageTime = document.createElement('span');
+                messageTime.className = 'message-time';
+                messageTime.textContent = message.time;
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                messageContent.textContent = message.content;
+                
+                messageHeader.appendChild(messageType);
+                messageHeader.appendChild(messageTime);
+                
+                messageItem.appendChild(messageHeader);
+                messageItem.appendChild(messageContent);
+                
+                messageList.appendChild(messageItem);
+            });
+        }
+        
+        anonymousForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const messageType = document.getElementById('message-type').value;
+            const messageContent = document.getElementById('anonymous-message').value.trim();
+            
+            if (!messageType || !messageContent) {
+                alert('Harap isi semua field!');
+                return;
+            }
+            
+            const submitBtn = anonymousForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Simpan pesan ke array
+                const newMessage = {
+                    type: messageType,
+                    content: messageContent,
+                    time: new Date().toLocaleString('id-ID', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                };
+                
+                anonymousMessages.push(newMessage);
+                
+                // Tampilkan pesan
+                displayMessages();
+                
+                alert(`Pesan anonim (${messageType}) berhasil dikirim!`);
+                anonymousForm.reset();
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Inisialisasi tampilan pesan
+        displayMessages();
+    </script>
+</body>
+</html>
